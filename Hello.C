@@ -14,8 +14,6 @@ const int INPUT_BUF_SIZE = 1 << 12;
 int main()
 {
   char input_buf[INPUT_BUF_SIZE];
-  int pid;
-  int status;
   //ShowPrompt(); //TODO : uncomment
   while(ShowPrompt())
   {
@@ -26,7 +24,7 @@ int main()
     if(input_buf[0] == EOF || !strcmp(input_buf, "exit")) return 0; //break;
 
     /* Execute command */
-    ExecCommand(input_buf);
+    ExecInput(input_buf);
   }
   return 0;
 }

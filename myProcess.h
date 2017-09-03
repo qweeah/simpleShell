@@ -7,4 +7,4 @@ int ShowPrompt();
 int GetOneLine(char*);
 
 /* Built-in command */
-void ExecCommand(char *cmdWithOptions);
+void ExecInput(char *cmdWithOptions);

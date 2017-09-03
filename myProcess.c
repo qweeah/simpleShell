@@ -12,7 +12,6 @@ static const char* prompt {"$$"};
 static const char token = ' ';
 
 static const size_t LOCALBUF_SIZE = 1 << 7;
-static char localBuf[ LOCALBUF_SIZE ];
 
 static const int MAX_OPTION_CNT = 1 << 7;
 static const int MAX_COMMAND_LEN = 1 << 7;
@@ -130,7 +129,7 @@ static int BuiltInCommand(int argc, char** argv)
 static void ExecCommand(int argc, char** argv)
 {
 	//fork
-	int pid = fork();
+	pid_t pid = fork();
 	int status;
 	if(pid == 0)
 	{
@@ -148,7 +147,7 @@ static void ExecCommand(int argc, char** argv)
 }
 
 // Execute a command
-void ExecCommand(char *cmdWithOptions)
+void ExecInput(char *rawInputLine)
 {
   char* options[MAX_OPTION_CNT];
   int isBuiltIn {0};
@@ -156,7 +155,7 @@ void ExecCommand(char *cmdWithOptions)
   /* 1. pipeline and TODO redirection */
 
   /* 2. format current command */
-  int optionCnt = SplitCommand(cmdWithOptions, options);
+  int optionCnt = SplitCommand(rawInputLine, options);
   printd("Split result:\n");
   for(int i=0; i<optionCnt; i++) printd("[%d] \"%s\"\n", i, options[i]);
 
