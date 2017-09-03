@@ -87,7 +87,7 @@ static void enterDirectory(char* dirStr){
       return;
     }
   }
-  printf("Execution error!");
+  printf("Bish: cd: %s; error no such path or directory!\n", dirStr);
 }
 
 static int BuiltInCommand(int argc, char** argv)
@@ -97,7 +97,8 @@ static int BuiltInCommand(int argc, char** argv)
   {
     if(argc < 2)
     {
-      printf("Error: No directory argument");
+			// Default enter $HOME
+			enterDirectory(getenv("HOME"));
       return result;
     }
     enterDirectory(argv[1]);
@@ -106,7 +107,8 @@ static int BuiltInCommand(int argc, char** argv)
   {
 		if(argc < 2)
     {
-      printf("Error: No directory argument");
+			// Default echo nothing
+      printf("\n");
       return result;
     }
 		printf("%s\n", argv[1]);
@@ -119,15 +121,13 @@ static int BuiltInCommand(int argc, char** argv)
   return result;
 }
 
-
-
 // Execute a command
 void ExecCommand(char *cmdWithOptions)
 {
   char* options[MAX_OPTION_CNT];
   int isBuiltIn {0};
 
-  /* TODO 1. pipeline and redirection */
+  /* 1. pipeline and TODO redirection */
 
   /* 2. format current command */
   int optionCnt = SplitCommand(cmdWithOptions, options);
