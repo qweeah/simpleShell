@@ -16,8 +16,8 @@ int main()
   char input_buf[INPUT_BUF_SIZE];
   int pid;
   int status;
-  ShowPrompt(); //TODO : uncomment
-  //while(ShowPrompt())
+  //ShowPrompt(); //TODO : uncomment
+  while(ShowPrompt())
   {
     GetOneLine(input_buf);
 
@@ -27,21 +27,6 @@ int main()
 
     /* Execute command */
     ExecCommand(input_buf);
-/*
-    //fork
-    pid = fork();
-    if(pid == 0)
-    {
-      printf("Child\n");
-      // exec
-      printf("%s\n", input_buf);
-      break;
-    }
-    else {
-      pid = wait(&status);
-      printf("Parent\n");
-    }
-*/
   }
   return 0;
 }

@@ -1,7 +1,10 @@
-#include <cstdio>
+#include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
+
+#include<sys/types.h>
+#include<wait.h>
 
 #include "myProcess.h"
 
@@ -90,6 +93,9 @@ static void enterDirectory(char* dirStr){
   printf("Bish: cd: %s; error no such path or directory!\n", dirStr);
 }
 
+/* Builtin Commands in shell
+ *
+ */
 static int BuiltInCommand(int argc, char** argv)
 {
   int result = 1;
@@ -121,6 +127,26 @@ static int BuiltInCommand(int argc, char** argv)
   return result;
 }
 
+static void ExecCommand(int argc, char** argv)
+{
+	//fork
+	int pid = fork();
+	int status;
+	if(pid == 0)
+	{
+		// exec
+		if(execvp(*argv, argv) < 0)
+		{
+			perror("Unable to execute command");
+			exit(EXIT_FAILURE);
+		}
+		exit(0);
+	}
+	else {
+		while(wait(&status) != pid);
+	}
+}
+
 // Execute a command
 void ExecCommand(char *cmdWithOptions)
 {
@@ -136,4 +162,10 @@ void ExecCommand(char *cmdWithOptions)
 
   /* 3. execute builtin command */
 	isBuiltIn = BuiltInCommand(optionCnt, options);
+
+	/* 4. exec external */
+	if(!isBuiltIn)
+	{
+		ExecCommand(optionCnt, options);
+	}
 }
