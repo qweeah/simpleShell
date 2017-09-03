@@ -102,6 +102,15 @@ static int BuiltInCommand(int argc, char** argv)
     }
     enterDirectory(argv[1]);
   }
+	else if(!strcmp(argv[0], "echo"))
+  {
+		if(argc < 2)
+    {
+      printf("Error: No directory argument");
+      return result;
+    }
+		printf("%s\n", argv[1]);
+	}
   else
   {
     // Nothing executed
