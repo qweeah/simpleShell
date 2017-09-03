@@ -72,13 +72,18 @@ int GetOneLine(char* buf)
   return len;
 }
 
+/* CD - enter the given directory
+ *
+ */
 static void enterDirectory(char* dirStr){
   int result = chdir(dirStr);
+	char *pwdStr = (char *)malloc(sizeof(char) * LOCALBUF_SIZE);
   if(result == 0)
   {
-    if(!getcwd(localBuf, LOCALBUF_SIZE))
+    if(getcwd(pwdStr, LOCALBUF_SIZE) != NULL)
     {
-      printf("Currently working directory: %s", localBuf);
+      printf("Currently working directory: %s\n", pwdStr);
+			free(pwdStr);
       return;
     }
   }
@@ -92,7 +97,7 @@ static int BuiltInCommand(int argc, char** argv)
   {
     if(argc < 2)
     {
-      printf("No directory argument");
+      printf("Error: No directory argument");
       return result;
     }
     enterDirectory(argv[1]);
@@ -111,6 +116,8 @@ static int BuiltInCommand(int argc, char** argv)
 void ExecCommand(char *cmdWithOptions)
 {
   char* options[MAX_OPTION_CNT];
+  int isBuiltIn {0};
+
   /* TODO 1. pipeline and redirection */
 
   /* 2. format current command */
@@ -118,6 +125,6 @@ void ExecCommand(char *cmdWithOptions)
   printd("Split result:\n");
   for(int i=0; i<optionCnt; i++) printd("[%d] \"%s\"\n", i, options[i]);
 
-  /* 3, execute command */
-  ExecCommand
+  /* 3. execute builtin command */
+	isBuiltIn = BuiltInCommand(optionCnt, options);
 }
