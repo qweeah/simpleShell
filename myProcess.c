@@ -126,13 +126,33 @@ static int BuiltInCommand(int argc, char** argv)
   return result;
 }
 
-static void ExecCommand(int argc, char** argv)
+// Divide pipe
+char* FindPipe(char *rawInputLine)
+{
+	char* nextCommand = nullptr;
+	while(*rawInputLine != '\0')
+	{
+		if(*rawInputLine == '|')
+		{
+			*rawInputLine = '\0';
+			nextCommand = rawInputLine + 1;
+			break;
+		}
+		rawInputLine++;
+	}
+	return nextCommand;
+}
+
+static void ExecCommand(int argc, char** argv, int fdIn, int fdOut)
 {
 	//fork
-	pid_t pid = fork();
 	int status;
+	pid_t pid = fork();
 	if(pid == 0)
 	{
+		// pipe
+		if(fdOut > 0) dup2(fdOut, STDOUT_FILENO);
+		if(fdIn > 0) dup2(fdIn, STDIN_FILENO);
 		// exec
 		if(execvp(*argv, argv) < 0)
 		{
@@ -141,18 +161,26 @@ static void ExecCommand(int argc, char** argv)
 		}
 		exit(0);
 	}
-	else {
+	else
+	{
 		while(wait(&status) != pid);
+		close(fdOut); // write done
 	}
 }
 
 // Execute a command
-void ExecInput(char *rawInputLine)
+void ExecInput(char *rawInputLine, int fdIn)
 {
   char* options[MAX_OPTION_CNT];
+	char* nextCommand;
   int isBuiltIn {0};
+	int pipeFd[2] = {-1, -1};
 
   /* 1. pipeline and TODO redirection */
+	nextCommand = FindPipe(rawInputLine);
+	if(nextCommand != nullptr) {
+		pipe(pipeFd);
+	}
 
   /* 2. format current command */
   int optionCnt = SplitCommand(rawInputLine, options);
@@ -165,6 +193,10 @@ void ExecInput(char *rawInputLine)
 	/* 4. exec external */
 	if(!isBuiltIn)
 	{
-		ExecCommand(optionCnt, options);
+		ExecCommand(optionCnt, options, fdIn, pipeFd[1]);
+	}
+
+	if(nextCommand != nullptr) {
+		ExecInput(nextCommand, pipeFd[0]);
 	}
 }

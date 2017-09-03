@@ -24,7 +24,7 @@ int main()
     if(input_buf[0] == EOF || !strcmp(input_buf, "exit")) return 0; //break;
 
     /* Execute command */
-    ExecInput(input_buf);
+    ExecInput(input_buf, -1);
   }
   return 0;
 }

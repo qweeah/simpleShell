@@ -1,4 +1,4 @@
-#define printd printf
+#define printd //printf
 
 /* Show shell prompt */
 int ShowPrompt();
@@ -7,4 +7,4 @@ int ShowPrompt();
 int GetOneLine(char*);
 
 /* Built-in command */
-void ExecInput(char *cmdWithOptions);
+void ExecInput(char *rawInputLine, int dfIn);
